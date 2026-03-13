@@ -17,22 +17,60 @@ export const obtenerSubcategoria = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 export const crearSubcategoria = async (req, res) => {
   try {
+
+    if (req.body.nombre) {
+      req.body.nombre = req.body.nombre.trim();
+    }
+
     const id = await Subcategoria.crear(req.body);
-    res.json({ message: "Subcategoría creada", id });
+
+    res.status(201).json({
+      mensaje: "Subcategoría creada correctamente",
+      id
+    });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensaje: 'Ya existe esa subcategoría en la categoría seleccionada'
+      });
+    }
+
+    res.status(500).json({
+      mensaje: 'Error al crear subcategoría',
+      error
+    });
   }
 };
 
 export const actualizarSubcategoria = async (req, res) => {
   try {
+
+    if (req.body.nombre) {
+      req.body.nombre = req.body.nombre.trim();
+    }
+
     await Subcategoria.actualizar(req.params.id, req.body);
-    res.json({ message: "Subcategoría actualizada" });
+
+    res.json({
+      mensaje: "Subcategoría actualizada correctamente"
+    });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensaje: 'Ya existe esa subcategoría en la categoría seleccionada'
+      });
+    }
+
+    res.status(500).json({
+      mensaje: 'Error al actualizar subcategoría',
+      error
+    });
   }
 };
 
