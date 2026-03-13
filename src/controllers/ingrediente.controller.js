@@ -34,13 +34,27 @@ export const obtenerIngrediente = async (req, res) => {
 
 export const crearIngrediente = async (req, res) => {
   try {
+
+    // limpiar el nombre (buena práctica)
+    if (req.body.nombre) {
+      req.body.nombre = req.body.nombre.trim();
+    }
+
     const id = await Ingrediente.crear(req.body);
 
     res.status(201).json({
       mensaje: 'Ingrediente creado correctamente',
       id
     });
+
   } catch (error) {
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensaje: 'El ingrediente ya está registrado'
+      });
+    }
+
     res.status(500).json({
       mensaje: 'Error al crear ingrediente',
       error
@@ -50,7 +64,13 @@ export const crearIngrediente = async (req, res) => {
 
 export const actualizarIngrediente = async (req, res) => {
   try {
+
     const { id } = req.params;
+
+    if (req.body.nombre) {
+      req.body.nombre = req.body.nombre.trim();
+    }
+
     const filasAfectadas = await Ingrediente.actualizar(id, req.body);
 
     if (filasAfectadas === 0) {
@@ -62,7 +82,15 @@ export const actualizarIngrediente = async (req, res) => {
     res.json({
       mensaje: 'Ingrediente actualizado correctamente'
     });
+
   } catch (error) {
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensaje: 'Ya existe otro ingrediente con ese nombre'
+      });
+    }
+
     res.status(500).json({
       mensaje: 'Error al actualizar ingrediente',
       error
