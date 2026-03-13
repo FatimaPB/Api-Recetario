@@ -46,10 +46,15 @@ export const login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    // Respuesta
+    res.cookie('token', token, {
+      httpOnly: true,      // no accesible desde JS (más seguro)
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000 // 1 hora
+    });
+
     res.json({
       mensaje: 'Login exitoso',
-      token,
       usuario: {
         id: usuario.id,
         nombre: usuario.nombre,
@@ -64,4 +69,19 @@ export const login = async (req, res) => {
       error
     });
   }
+};
+
+
+export const logout = (req, res) => {
+
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
+  });
+
+  res.json({
+    mensaje: 'Sesión cerrada correctamente'
+  });
+
 };

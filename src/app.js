@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import recetaRoutes from './routes/receta.routes.js';
 import usuarioRoutes from './routes/usuario.routes.js';
@@ -16,14 +17,19 @@ import platilloPrecioRoutes from './routes/platilloPrecio.routes.js';
 import precioMotorRoutes from './routes/precioMotor.routes.js';
 import unidadRoutes from './routes/unidad.routes.js';
 import componenteRoutes from './routes/componente.routes.js';
-import dashboardRoutes from './routes/dashboard.routes.js'; 
+import dashboardRoutes from './routes/dashboard.routes.js';
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:4200', // Angular
+  credentials: true
+}));
+
 app.use(express.json());
+app.use(cookieParser());
 app.use('/uploads', express.static('uploads'));
 app.use('/api/recetas', recetaRoutes);
 app.use('/api/usuarios', usuarioRoutes);
