@@ -20,21 +20,61 @@ export const obtenerCategoriaGlobal = async (req, res) => {
 
 export const crearCategoriaGlobal = async (req, res) => {
   try {
+
+    if (req.body.nombre) {
+      req.body.nombre = req.body.nombre.trim();
+    }
+
     const id = await CategoriaGlobal.crear(req.body);
-    res.json({ message: "Categoría creada", id });
+
+    res.status(201).json({
+      mensaje: "Categoría creada correctamente",
+      id
+    });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensaje: 'La categoría ya está registrada'
+      });
+    }
+
+    res.status(500).json({
+      mensaje: 'Error al crear categoría',
+      error
+    });
   }
 };
 
 export const actualizarCategoriaGlobal = async (req, res) => {
   try {
+
+    if (req.body.nombre) {
+      req.body.nombre = req.body.nombre.trim();
+    }
+
     await CategoriaGlobal.actualizar(req.params.id, req.body);
-    res.json({ message: "Categoría actualizada" });
+
+    res.json({
+      mensaje: "Categoría actualizada correctamente"
+    });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({
+        mensaje: 'Ya existe una categoría con ese nombre'
+      });
+    }
+
+    res.status(500).json({
+      mensaje: 'Error al actualizar categoría',
+      error
+    });
   }
 };
+
 
 export const eliminarCategoriaGlobal = async (req, res) => {
   try {
