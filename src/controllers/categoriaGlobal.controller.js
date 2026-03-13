@@ -25,6 +25,20 @@ export const crearCategoriaGlobal = async (req, res) => {
       req.body.nombre = req.body.nombre.trim();
     }
 
+    // Validar campo vacío
+    if (!req.body.nombre) {
+      return res.status(400).json({
+        mensaje: 'El nombre de la categoría es obligatorio'
+      });
+    }
+
+    // Validar longitud mínima
+    if (req.body.nombre.length < 3) {
+      return res.status(400).json({
+        mensaje: 'El nombre de la categoría debe tener al menos 3 caracteres'
+      });
+    }
+
     const id = await CategoriaGlobal.crear(req.body);
 
     res.status(201).json({
@@ -41,8 +55,7 @@ export const crearCategoriaGlobal = async (req, res) => {
     }
 
     res.status(500).json({
-      mensaje: 'Error al crear categoría',
-      error
+      mensaje: 'Error al crear categoría'
     });
   }
 };
@@ -52,6 +65,20 @@ export const actualizarCategoriaGlobal = async (req, res) => {
 
     if (req.body.nombre) {
       req.body.nombre = req.body.nombre.trim();
+    }
+
+    // Validar campo vacío
+    if (!req.body.nombre) {
+      return res.status(400).json({
+        mensaje: 'El nombre de la categoría es obligatorio'
+      });
+    }
+
+    // Validar longitud mínima
+    if (req.body.nombre.length < 3) {
+      return res.status(400).json({
+        mensaje: 'El nombre de la categoría debe tener al menos 3 caracteres'
+      });
     }
 
     await CategoriaGlobal.actualizar(req.params.id, req.body);
@@ -69,8 +96,7 @@ export const actualizarCategoriaGlobal = async (req, res) => {
     }
 
     res.status(500).json({
-      mensaje: 'Error al actualizar categoría',
-      error
+      mensaje: 'Error al actualizar categoría'
     });
   }
 };
